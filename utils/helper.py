@@ -1,4 +1,5 @@
 import json
+from utils.logger import Logger  # Assuming you have a Logger class for better error handling
 
 class DataManager:
     @staticmethod
@@ -7,7 +8,8 @@ class DataManager:
             with open(file_path, "r") as file:
                 return json.load(file)
         except Exception as e:
-            print(f"Error loading JSON file: {e}")
+            logger = Logger()
+            logger.log_error(f"Error loading JSON file {file_path}: {e}")
             return {}
 
     @staticmethod
@@ -15,5 +17,8 @@ class DataManager:
         try:
             with open(file_path, "w") as file:
                 json.dump(data, file, indent=4)
+            logger = Logger()
+            logger.log_info(f"Successfully saved data to {file_path}")
         except Exception as e:
-            print(f"Error saving JSON file: {e}")
+            logger = Logger()
+            logger.log_error(f"Error saving JSON file {file_path}: {e}")
