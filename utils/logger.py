@@ -8,20 +8,17 @@ class Logger:
         log_file = os.path.join(log_dir, "app.log")
 
         self.logger = logging.getLogger(__name__)
-        self.logger.setLevel(logging.DEBUG)  # Capture all levels
+        self.logger.setLevel(logging.DEBUG)
         self.logger.propagate = False
 
         formatter = logging.Formatter("%(asctime)s - %(levelname)s - %(message)s")
 
-        # File handler
         file_handler = logging.FileHandler(log_file)
         file_handler.setFormatter(formatter)
 
-        # Stream handler (console)
         stream_handler = logging.StreamHandler()
         stream_handler.setFormatter(formatter)
 
-        # Avoid adding multiple handlers if already added
         if not self.logger.handlers:
             self.logger.addHandler(file_handler)
             self.logger.addHandler(stream_handler)
