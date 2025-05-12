@@ -123,7 +123,7 @@ class Config:
             }
         },
         # Models Configuration
-        "summarizer_model": {
+        "summarizer_api_key": {
             "base_url": "https://api-inference.huggingface.co/models/facebook/bart-large-cnn",  # Summarizer Model
             "headers": {
                 "Authorization": f"Bearer {os.getenv('HUGGINGFACE_API_KEY')}"  # For Summarizer
