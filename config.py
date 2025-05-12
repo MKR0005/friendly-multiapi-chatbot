@@ -138,7 +138,7 @@ class Config:
             "params": {}
         },
         "fallback_api_key": {
-            "base_url": "https://api-inference.huggingface.co/models/mistralai/Mistral-7B-Instruct-v0.3",  # Fallback Model
+            "base_url": "https://api-inference.huggingface.co/models/google/flan-t5-large",  # Fallback Model
             "headers": {
                 "Authorization": f"Bearer {os.getenv('HUGGINGFACE_API_KEY2')}"  # For Fallback
             },
