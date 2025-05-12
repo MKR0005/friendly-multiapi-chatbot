@@ -40,8 +40,9 @@ class Config:
 def main():
     # Initialize services with API keys
     api_service = APIService()
-    agent_manager = AgentManager(Config.HUGGINGFACE_API_KEY1)
+    agent_manager = AgentManager()
     rag_service = RAGService()
+
 
     # Example user query
     user_input = input("Enter your query: ").strip()
