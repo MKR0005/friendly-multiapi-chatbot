@@ -36,13 +36,11 @@ class Config:
         'transport_api': {'base_url': 'https://api.transport.com/v1', 'headers': {}},
     }
 
-
 def main():
     # Initialize services with API keys
     api_service = APIService()
     agent_manager = AgentManager()
     rag_service = RAGService()
-
 
     # Example user query
     user_input = input("Enter your query: ").strip()
@@ -69,7 +67,7 @@ def main():
             print(f"No config found for {api_name}")
     else:
         print("No relevant API found. Falling back to chatbot mode...")
-        fallback_response = fallback_chatbot(user_input, Config.HUGGINGFACE_API_KEY2)
+        fallback_response = fallback_chatbot(user_input)
         print("Chatbot Response:", fallback_response)
 
 
