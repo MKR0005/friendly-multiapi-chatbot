@@ -1,6 +1,6 @@
 from agents.base_agent import BaseAgent
-from agents.summarizer import Summarizer
-from agents.reasoning import Reasoning
+from modules.summarizer import Summarizer
+from modules.reasoning import Reasoning
 from services.api_service import APIService
 from utils.logger import Logger
 
