@@ -1,6 +1,6 @@
 from typing import List, Dict
-from agents.summarizer import Summarizer
-from agents.reasoning import Reasoning
+from modules.summarizer import Summarizer
+from modules.reasoning import Reasoning
 from config import Config
 
 class RAGService:
