@@ -99,14 +99,19 @@ def get_api_name_from_query(query: str) -> str:
     return None
 
 
-def fallback_chatbot(query: str, api_key: str) -> str:
-    try:
-        chatbot = pipeline("text2text-generation", model="google/flan-t5-large", use_auth_token=api_key)
-        response = chatbot(query, max_length=50, num_return_sequences=1)
-        return response[0]['generated_text'].strip()
-    except Exception as e:
-        print(f"Chatbot error: {e}")
-        return "Error in chatbot processing."
+def fallback_chatbot(query: str) -> str:
+    api_keys = [Config.HUGGINGFACE_API_KEY, Config.HUGGINGFACE_API_KEY1, Config.HUGGINGFACE_API_KEY2]
+    
+    for key in api_keys:
+        if key:
+            try:
+                chatbot = pipeline("text2text-generation", model="google/flan-t5-large", use_auth_token=key)
+                response = chatbot(query, max_length=50, num_return_sequences=1)
+                return response[0]['generated_text'].strip()
+            except Exception as e:
+                print(f"Chatbot error with API key {key}: {e}")
+    
+    return "Error in chatbot processing. All API keys failed."
 
 
 if __name__ == "__main__":
