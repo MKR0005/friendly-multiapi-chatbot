@@ -1,5 +1,8 @@
 import requests
 from config import API_CONFIG
+from utils.logger import Logger
+
+logger = Logger()
 
 class APIManager:
     def __init__(self):
@@ -19,8 +22,9 @@ class APIManager:
         if api_name in self.api_handlers:
             return self.api_handlers[api_name].get_data(params)
         else:
-            print(f"API {api_name} not found")
+            logger.log_warning(f"API '{api_name}' not found")
             return None
+
 
 class APIHandler:
     def __init__(self, name, url, headers, params):
@@ -32,9 +36,19 @@ class APIHandler:
     def get_data(self, additional_params=None):
         try:
             params = {**self.params, **(additional_params or {})}
-            response = requests.get(self.url, headers=self.headers, params=params)
+            response = requests.get(self.url, headers=self.headers, params=params, timeout=10)
             response.raise_for_status()
-            return response.json()
+
+            try:
+                return response.json()
+            except ValueError:
+                logger.log_error(f"Invalid JSON response from API '{self.name}'")
+                return None
+
         except requests.RequestException as e:
-            print(f"Error fetching data from {self.name}: {e}")
+            logger.log_error(f"Error fetching data from API '{self.name}': {e}")
             return None
+
+        # Optional retry logic (you can uncomment and implement later)
+        # except SomeRetryableError as e:
+        #     retry logic here
