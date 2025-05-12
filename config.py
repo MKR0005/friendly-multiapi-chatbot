@@ -133,7 +133,7 @@ API_CONFIG = {
         "params": {}
     },
     "fallback_model": {
-        "base_url": "https://api-inference.huggingface.co/models/microsoft/DialoGPT-medium",  # Fallback Model
+        "base_url": "https://api-inference.huggingface.co/models/google/flan-t5-large",  # Fallback Model
         "headers": {
             "Authorization": f"Bearer {os.getenv('HUGGINGFACE_API_KEY2')}"  # For Fallback
         },
