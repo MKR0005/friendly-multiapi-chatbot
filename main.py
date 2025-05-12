@@ -103,7 +103,7 @@ def fallback_chatbot(query: str) -> str:
     for key in api_keys:
         if key:
             try:
-                chatbot = pipeline("text2text-generation", model="google/flan-t5-large", use_auth_token=key)
+                chatbot = pipeline("text2text-generation", model="mistralai/Mistral-7B-Instruct-v0.3", use_auth_token=key)
                 response = chatbot(query, max_length=50, num_return_sequences=1)
                 return response[0]['generated_text'].strip()
             except Exception as e:
