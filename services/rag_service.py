@@ -5,13 +5,19 @@ from config import Config
 
 class RAGService:
     def __init__(self):
-        # Initialize with respective API keys for summarizer, reasoning, and fallback models
-        self.summarizer = Summarizer(Config.HUGGINGFACE_API_KEY)  # Summarizer uses HUGGINGFACE_API_KEY
-        self.reasoning = Reasoning(Config.HUGGINGFACE_API_KEY1)   # Reasoning uses HUGGINGFACE_API_KEY1
+        """
+        Initialize with respective API keys for summarizer, reasoning, and fallback models
+        using the API keys defined in the Config class.
+        """
+        # Summarizer uses HUGGINGFACE_API_KEY
+        self.summarizer = Summarizer(Config.HUGGINGFACE_API_KEY)
+        # Reasoning uses HUGGINGFACE_API_KEY1
+        self.reasoning = Reasoning(Config.HUGGINGFACE_API_KEY1)
 
     def retrieve(self, query: str, api_responses: List[Dict]) -> List[Dict]:
         """
         Retrieve relevant responses from the API responses based on the query.
+        This function searches for the query string within the 'data' key of the response.
         """
         relevant_responses = []
         for response in api_responses:
@@ -23,6 +29,7 @@ class RAGService:
     def aggregate(self, relevant_responses: List[Dict]) -> str:
         """
         Aggregate the relevant responses into a single string.
+        Joins all 'data' values into a single string separated by newline characters.
         """
         return "\n".join([resp.get("data", "") for resp in relevant_responses if isinstance(resp.get("data", ""), str)])
 
@@ -30,6 +37,11 @@ class RAGService:
         """
         Process the query by retrieving relevant data, aggregating it,
         summarizing it, and reasoning based on the summary.
+        The process steps are:
+        1. Retrieve relevant responses based on the query.
+        2. Aggregate the relevant responses into a single string.
+        3. Summarize the aggregated content using the Summarizer.
+        4. Reason based on the summarized content using the Reasoning model.
         """
         try:
             # Step 1: Retrieve relevant responses based on the query
@@ -38,7 +50,7 @@ class RAGService:
             if not relevant_responses:
                 return "No relevant information found to answer your query."
 
-            # Step 2: Aggregate the relevant responses
+            # Step 2: Aggregate the relevant responses into a single string
             aggregated_response = self.aggregate(relevant_responses)
 
             if not aggregated_response.strip():
@@ -56,5 +68,5 @@ class RAGService:
             return final_response
 
         except Exception as e:
-            # Catch any unexpected errors and log them
+            # Catch any unexpected errors and return a detailed error message
             return f"An error occurred while processing the request: {str(e)}"
