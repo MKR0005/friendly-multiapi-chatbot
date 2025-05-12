@@ -1,28 +1,19 @@
 from agents.base_agent import BaseAgent
+from agents.summarizer import Summarizer
+from agents.reasoning import Reasoning
 from utils.logger import Logger
 
 class AgentManager:
-    def __init__(self):
+    def __init__(self, api_key=None):
         self.logger = Logger()
-        self.agents = {}  # Dictionary to store agents by name/keywords
+        self.api_key = api_key
+        self.agents = {}
         self._load_agents()
 
     def _load_agents(self):
-        """
-        Dynamically load and register all available agents.
-        You can add more here as needed.
-        """
-        from modules.summarizer import Summarizer
-        from modules.reasoning import Reasoning
-        from modules.weather import WeatherAgent
-        from modules.stock import StockAgent
-        # Add your own imports...
-
-        # Register agents with routing keywords
-        self._register_agent("summarize", Summarizer(), ["summarize", "summary"])
-        self._register_agent("reasoning", Reasoning(), ["why", "because", "explain"])
-        self._register_agent("weather", WeatherAgent(), ["weather", "temperature"])
-        self._register_agent("stock", StockAgent(), ["stock", "price", "market"])
+        self._register_agent("summarize", Summarizer(self.api_key), ["summarize", "summary"])
+        self._register_agent("reasoning", Reasoning(self.api_key), ["why", "because", "explain"])
+        # Add more agents as needed
 
     def _register_agent(self, name: str, agent: BaseAgent, keywords: list):
         self.agents[name] = {
@@ -31,7 +22,6 @@ class AgentManager:
         }
 
     def _route_to_agents(self, text: str) -> list:
-        """Find agents whose keywords match the input text."""
         matched = []
         for name, data in self.agents.items():
             if any(keyword.lower() in text.lower() for keyword in data["keywords"]):
@@ -39,9 +29,6 @@ class AgentManager:
         return matched
 
     def process_request(self, text: str) -> dict:
-        """
-        Process the user request by routing to appropriate agents.
-        """
         try:
             selected_agents = self._route_to_agents(text)
             if not selected_agents:
@@ -49,9 +36,13 @@ class AgentManager:
 
             responses = {}
             for agent in selected_agents:
-                output = agent.run(text)
-                responses[agent.__class__.__name__] = output
-
+                # Adjust based on your agent interface
+                if hasattr(agent, "summarize"):
+                    responses[agent.__class__.__name__] = agent.summarize(text)
+                elif hasattr(agent, "reason"):
+                    responses[agent.__class__.__name__] = agent.reason(text, text)
+                else:
+                    responses[agent.__class__.__name__] = "Agent method not found"
             return responses
 
         except Exception as e:
