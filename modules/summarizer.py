@@ -1,3 +1,4 @@
+import os
 from utils.logger import Logger
 class Summarizer:
     def __init__(self, api_key=None, model_name="facebook/bart-large-cnn"):
