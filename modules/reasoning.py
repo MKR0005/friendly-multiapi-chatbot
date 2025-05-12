@@ -4,7 +4,7 @@ from utils.logger import Logger
 class Reasoning:
     def __init__(self, api_key=None):
         self.api_key = api_key or os.getenv("HUGGINGFACE_API_KEY")
-        self.model_name = "google/flan-t5-large"
+        self.model_name = "mistralai/Mistral-7B-Instruct-v0.3"
         self.endpoint = f"https://api-inference.huggingface.co/models/{self.model_name}"
         self.logger = Logger()
     def reason(self, question: str, context: str) -> str:
