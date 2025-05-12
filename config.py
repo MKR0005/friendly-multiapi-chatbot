@@ -118,11 +118,24 @@ API_CONFIG = {
         "params": {
             "apikey": os.getenv("API_KEY_TRANSPORT")
         }
-    },
-    "huggingface_model": {
-        "base_url": "https://api-inference.huggingface.co/models/google/flan-t5-large",
+    "summarizer_model": {
+        "base_url": "https://api-inference.huggingface.co/models/facebook/bart-large-cnn",  # Summarizer Model
         "headers": {
-            "Authorization": f"Bearer {os.getenv('HUGGINGFACE_API_KEY')}"
+            "Authorization": f"Bearer {os.getenv('HUGGINGFACE_API_KEY')}"  # For Summarizer
+        },
+        "params": {}
+    },
+    "reasoning_model": {
+        "base_url": "https://api-inference.huggingface.co/models/google/flan-t5-large",  # Reasoning Model
+        "headers": {
+            "Authorization": f"Bearer {os.getenv('HUGGINGFACE_API_KEY1')}"  # For Reasoning
+        },
+        "params": {}
+    },
+    "fallback_model": {
+        "base_url": "https://api-inference.huggingface.co/models/microsoft/DialoGPT-medium",  # Fallback Model
+        "headers": {
+            "Authorization": f"Bearer {os.getenv('HUGGINGFACE_API_KEY2')}"  # For Fallback
         },
         "params": {}
     }
