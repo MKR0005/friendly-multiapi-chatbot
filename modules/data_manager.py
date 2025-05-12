@@ -11,21 +11,31 @@ class DataManager:
 
     def save_response(self, api_name: str, response_data: dict):
         try:
+            # Create file path based on API name
             file_path = os.path.join(self.responses_dir, f"{api_name}.json")
+            
+            # Save response to a JSON file
             with open(file_path, "w") as file:
                 json.dump(response_data, file, indent=4)
-            self.logger.log_info(f"Response saved for {api_name}")
+            self.logger.log_info(f"Response saved for {api_name} at {file_path}")
+        
         except Exception as e:
             self.logger.log_error(f"Error saving response for {api_name}: {e}")
 
     def load_response(self, api_name: str) -> dict:
         try:
+            # Create file path based on API name
             file_path = os.path.join(self.responses_dir, f"{api_name}.json")
-            with open(file_path, "r") as file:
-                return json.load(file)
-        except FileNotFoundError:
-            self.logger.log_warning(f"No data found for {api_name}")
-            return {}
+            
+            # Load response from a JSON file
+            if os.path.exists(file_path):
+                with open(file_path, "r") as file:
+                    return json.load(file)
+            else:
+                self.logger.log_warning(f"No data found for {api_name}.")
+                return {}
+        
         except Exception as e:
             self.logger.log_error(f"Error loading response for {api_name}: {e}")
             return {}
+
