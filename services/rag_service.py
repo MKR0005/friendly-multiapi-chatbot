@@ -1,8 +1,6 @@
 from typing import List, Dict
 from agents.summarizer import Summarizer
 from agents.reasoning import Reasoning
-# from utils.logger import Logger  # Uncomment if you want to log
-# logger = Logger()
 
 class RAGService:
     def __init__(self, api_key: str):
@@ -10,9 +8,6 @@ class RAGService:
         self.reasoning = Reasoning(api_key)
 
     def retrieve(self, query: str, api_responses: List[Dict]) -> List[Dict]:
-        """
-        Filters API responses based on query relevance.
-        """
         relevant_responses = []
         for response in api_responses:
             data = response.get("data", "")
@@ -21,15 +16,9 @@ class RAGService:
         return relevant_responses
 
     def aggregate(self, relevant_responses: List[Dict]) -> str:
-        """
-        Joins all relevant data fields into a single string.
-        """
         return "\n".join([resp.get("data", "") for resp in relevant_responses if isinstance(resp.get("data", ""), str)])
 
     def process(self, query: str, api_responses: List[Dict]) -> str:
-        """
-        Full RAG pipeline: retrieve → aggregate → summarize → reason.
-        """
         relevant_responses = self.retrieve(query, api_responses)
         
         if not relevant_responses:
@@ -41,6 +30,6 @@ class RAGService:
             return "Relevant information was empty or could not be aggregated."
 
         summarized_content = self.summarizer.summarize(aggregated_response)
-        final_response = self.reasoning.reason(summarized_content)
+        final_response = self.reasoning.reason(query, summarized_content)
 
         return final_response
