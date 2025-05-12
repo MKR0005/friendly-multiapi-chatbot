@@ -41,7 +41,7 @@ def main():
     # Initialize services with API keys
     api_service = APIService()
     agent_manager = AgentManager(Config.HUGGINGFACE_API_KEY1)
-    rag_service = RAGService(Config.HUGGINGFACE_API_KEY)
+    rag_service = RAGService()
 
     # Example user query
     user_input = input("Enter your query: ").strip()
