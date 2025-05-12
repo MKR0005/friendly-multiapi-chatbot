@@ -4,8 +4,8 @@ from typing import Any, Dict
 from utils.logger import Logger
 
 class Reasoning:
-    def __init__(self):
-        self.api_key = os.getenv("HUGGINGFACE_API_KEY")
+    def __init__(self, api_key=None):
+        self.api_key = api_key or os.getenv("HUGGINGFACE_API_KEY")
         self.endpoint = "https://api-inference.huggingface.co/models/google/flan-t5-large"
         self.logger = Logger()
 
@@ -30,5 +30,5 @@ class Reasoning:
                 self.logger.log_warning("Unexpected response format from reasoning model.")
                 return "Unexpected response format"
         except Exception as e:
-            self.logger.log_error(f"Error in reasoning: {e}")
+            self.logger.log_error(f"Error in reasoning: {e}") 
             return "Error in reasoning"
