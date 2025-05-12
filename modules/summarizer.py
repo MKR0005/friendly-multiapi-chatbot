@@ -4,9 +4,9 @@ from typing import Any, Dict
 from utils.logger import Logger
 
 class Summarizer:
-    def __init__(self):
-        self.api_key = os.getenv("HUGGINGFACE_API_KEY")
-        self.endpoint = "https://api-inference.huggingface.co/models/facebook/bart-large-cnn"  # Example summarization model
+    def __init__(self, api_key=None):
+        self.api_key = api_key or os.getenv("HUGGINGFACE_API_KEY")
+        self.endpoint = "https://api-inference.huggingface.co/models/facebook/bart-large-cnn"
         self.logger = Logger()
 
     def summarize(self, content: str) -> str:
