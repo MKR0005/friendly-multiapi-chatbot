@@ -1,21 +1,12 @@
 import os
 import requests
 from utils.logger import Logger
-
 class Reasoning:
-    def __init__(self, api_key=None, model_name="google/flan-t5-large"):
-        """
-        Initializes the Reasoning class with the API key and model name.
-        
-        Args:
-        - api_key (str, optional): API key for Hugging Face.
-        - model_name (str): The name of the Hugging Face model to use.
-        """
+    def __init__(self, api_key=None):
         self.api_key = api_key or os.getenv("HUGGINGFACE_API_KEY")
-        self.model_name = model_name
+        self.model_name = "google/flan-t5-large"
         self.endpoint = f"https://api-inference.huggingface.co/models/{self.model_name}"
         self.logger = Logger()
-
     def reason(self, question: str, context: str) -> str:
         """
         Given a question and context, generates a response using the Hugging Face model.
