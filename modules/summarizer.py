@@ -1,7 +1,3 @@
-import os
-import requests
-from utils.logger import Logger
-
 class Summarizer:
     def __init__(self, api_key=None, model_name="facebook/bart-large-cnn"):
         """
@@ -11,7 +7,7 @@ class Summarizer:
         - api_key (str, optional): API key for Hugging Face.
         - model_name (str): The name of the Hugging Face model to use for summarization.
         """
-        self.api_key = api_key or os.getenv("HUGGINGFACE_API_KEY")
+        self.api_key = api_key or os.getenv("HUGGINGFACE_API_KEY1")  # Update to HUGGINGFACE_API_KEY1
         self.model_name = model_name
         self.endpoint = f"https://api-inference.huggingface.co/models/{self.model_name}"
         self.logger = Logger()
