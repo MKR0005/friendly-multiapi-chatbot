@@ -2,10 +2,11 @@ from services.api_service import APIService
 from agents.agent_manager import AgentManager
 from services.rag_service import RAGService
 from transformers import pipeline
+from config import Config
 
 def main():
     # Initialize with Hugging Face API Key
-    api_key = Config.HUGGINGFACE_API_KEY
+    api_key = Config.HUGGINGFACE_API_KEY3
     api_service = APIService()
     agent_manager = AgentManager(api_key)  # Pass the same API key
     rag_service = RAGService(api_key)  # Pass the same API key
