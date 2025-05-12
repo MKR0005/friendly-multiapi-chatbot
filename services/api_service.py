@@ -1,14 +1,18 @@
 import requests
 from config import Config
 from utils.logger import Logger
+import time
 
 class APIService:
-    def __init__(self):
+    def __init__(self, retries: int = 3, timeout: int = 10):
         self.logger = Logger()
+        self.retries = retries
+        self.timeout = timeout
 
     def fetch_data(self, api_name: str, endpoint: str = "", params: dict = None) -> dict:
         """
         Fetch data from the specified API using the API name and endpoint.
+        Implements retries in case of transient errors.
         """
         try:
             # Get API info from the config
@@ -27,17 +31,21 @@ class APIService:
             headers = api_info.get("headers", {})
             final_params = {**api_info.get("params", {}), **(params or {})}
 
-            # Send the GET request to the API
-            response = requests.get(url, headers=headers, params=final_params, timeout=10)
-            response.raise_for_status()
+            # Attempt to fetch data, with retries
+            for attempt in range(self.retries):
+                try:
+                    response = requests.get(url, headers=headers, params=final_params, timeout=self.timeout)
+                    response.raise_for_status()
+                    return response.json()  # Return the successful response
 
-            # Return the API response as a JSON object
-            return response.json()
-        
-        except requests.RequestException as e:
-            self.logger.log_error(f"Error fetching data from API '{api_name}': {e}")
-            return {}
+                except requests.RequestException as e:
+                    if attempt < self.retries - 1:
+                        self.logger.log_warning(f"Error fetching data from API '{api_name}', retrying ({attempt + 1}/{self.retries}): {e}")
+                        time.sleep(2)  # Wait before retrying
+                    else:
+                        self.logger.log_error(f"Error fetching data from API '{api_name}' after {self.retries} attempts: {e}")
+                        return {}
+
         except Exception as e:
             self.logger.log_error(f"An unexpected error occurred while fetching data from API '{api_name}': {e}")
             return {}
-
