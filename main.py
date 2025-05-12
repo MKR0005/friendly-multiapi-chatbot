@@ -6,7 +6,7 @@ from config import Config
 
 def main():
     # Initialize with Hugging Face API Key
-    api_key = Config.HUGGINGFACE_API_KEY3
+    api_key = Config.HUGGINGFACE_API_KEY2
     api_service = APIService()
     agent_manager = AgentManager(api_key)  # Pass the same API key
     rag_service = RAGService(api_key)  # Pass the same API key
