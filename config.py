@@ -130,7 +130,7 @@ class Config:
             },
             "params": {}
         },
-        "reasoning_model": {
+        "reasoning_api_key": {
             "base_url": "https://api-inference.huggingface.co/models/google/flan-t5-large",  # Reasoning Model
             "headers": {
                 "Authorization": f"Bearer {os.getenv('HUGGINGFACE_API_KEY1')}"  # For Reasoning
