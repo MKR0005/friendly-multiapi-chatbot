@@ -5,26 +5,24 @@ from config import Config
 
 class RAGService:
     def __init__(self):
-        """
-        Initialize with respective API keys for summarizer, reasoning, and fallback models
-        using the API keys defined in the Config class.
-        """
-        # Summarizer uses HUGGINGFACE_API_KEY
-        self.summarizer = Summarizer(Config.HUGGINGFACE_API_KEY)
-        # Reasoning uses HUGGINGFACE_API_KEY1
-        self.reasoning = Reasoning(Config.HUGGINGFACE_API_KEY1)
+        # Access the summarizer API configuration
+        summarizer_config = Config.API_CONFIG.get("summarizer_api_key")
+        if not summarizer_config:
+            raise ValueError("Summarizer API configuration not found.")
+        
+        api_key = summarizer_config["headers"]["Authorization"].replace("Bearer ", "")
+        self.summarizer = Summarizer(api_key)
 
     def retrieve(self, query: str, api_responses: List[Dict]) -> List[Dict]:
         relevant_responses = []
         for response in api_responses:
-            data = response.get("data", "")
-            if isinstance(data, str) and query.lower() in data.lower():
+            if query.lower() in response.get("data", "").lower():
                 relevant_responses.append(response)
         return relevant_responses
 
     def aggregate(self, relevant_responses: List[Dict]) -> str:
-        return "\n".join([resp.get("data", "") for resp in relevant_responses if isinstance(resp.get("data", ""), str)])
-
+        aggregated_response = "\n".join([resp.get("data", "") for resp in relevant_responses])
+        return aggregated_response
     def process(self, query: str, api_responses: List[Dict]) -> str:
         try:
             relevant_responses = self.retrieve(query, api_responses)
