@@ -1,61 +1,79 @@
+import os
 from services.api_service import APIService
 from agents.agent_manager import AgentManager
 from services.rag_service import RAGService
 from transformers import pipeline
 from config import Config  # Import Config class from config module
+from dotenv import load_dotenv
+
+# Load environment variables
+load_dotenv()
+
+class Config:
+    # Load API keys from environment variables
+    HUGGINGFACE_API_KEY = os.getenv("HUGGINGFACE_API_KEY")
+    HUGGINGFACE_API_KEY1 = os.getenv("HUGGINGFACE_API_KEY1")
+    HUGGINGFACE_API_KEY2 = os.getenv("HUGGINGFACE_API_KEY2")
+
+    # Define API configurations
+    API_CONFIG = {
+        'news_api': {'base_url': 'https://api.news.com/v1', 'headers': {}},
+        'weather_api': {'base_url': 'https://api.weather.com/v1', 'headers': {}},
+        'crypto_api': {'base_url': 'https://api.crypto.com/v1', 'headers': {}},
+        'sports_api': {'base_url': 'https://api.sports.com/v1', 'headers': {}},
+        'stocks_api': {'base_url': 'https://api.stocks.com/v1', 'headers': {}},
+        'finance_api': {'base_url': 'https://api.finance.com/v1', 'headers': {}},
+        'health_api': {'base_url': 'https://api.health.com/v1', 'headers': {}},
+        'education_api': {'base_url': 'https://api.education.com/v1', 'headers': {}},
+        'travel_api': {'base_url': 'https://api.travel.com/v1', 'headers': {}},
+        'books_api': {'base_url': 'https://api.books.com/v1', 'headers': {}},
+        'music_api': {'base_url': 'https://api.music.com/v1', 'headers': {}},
+        'traffic_api': {'base_url': 'https://api.traffic.com/v1', 'headers': {}},
+        'shopping_api': {'base_url': 'https://api.shopping.com/v1', 'headers': {}},
+        'jobs_api': {'base_url': 'https://api.jobs.com/v1', 'headers': {}},
+        'events_api': {'base_url': 'https://api.events.com/v1', 'headers': {}},
+        'trends_api': {'base_url': 'https://api.trends.com/v1', 'headers': {}},
+        'transport_api': {'base_url': 'https://api.transport.com/v1', 'headers': {}},
+    }
+
 
 def main():
-    # Initialize with Hugging Face API Keys for different models
-    summarizer_api_key = Config.HUGGINGFACE_API_KEY  # For Summarizer model
-    reasoning_api_key = Config.HUGGINGFACE_API_KEY1  # For Reasoning model
-    fallback_api_key = Config.HUGGINGFACE_API_KEY2  # For Fallback chatbot model
-
-    # Initialize services with respective API keys
+    # Initialize services with API keys
     api_service = APIService()
-    agent_manager = AgentManager(reasoning_api_key)  # Use Reasoning API key here
-    rag_service = RAGService(summarizer_api_key)  # Use Summarizer API key here
+    agent_manager = AgentManager(Config.HUGGINGFACE_API_KEY1)
+    rag_service = RAGService(Config.HUGGINGFACE_API_KEY)
 
     # Example user query
     user_input = input("Enter your query: ").strip()
 
-    # Automatically determine the correct API based on the user's query
+    # Determine API based on query
     api_name = get_api_name_from_query(user_input)
-    if not api_name:
-        print("No appropriate API found for your query.")
-        print("Fallback to chatbot mode...")
-        chatbot_response = fallback_chatbot(user_input, fallback_api_key)  # Use Fallback API key here
-        print("Chatbot Response:", chatbot_response)
-        return
 
-    # Get the API details from the config
-    api_info = Config.API_CONFIG.get(api_name, None)
-    if api_info is None:
-        print("No configuration found for the selected API.")
-        return
+    if api_name:
+        api_info = Config.API_CONFIG.get(api_name)
+        if api_info:
+            endpoint = api_info.get('base_url')
+            api_data = api_service.fetch_data(api_name, endpoint)
+            if api_data:
+                # Process with agents
+                response = agent_manager.process_request(user_input)
+                print("Agent Response:", response)
 
-    endpoint = api_info.get('base_url', '')  # Modify as per your need
+                # Process with RAG
+                rag_response = rag_service.process(user_input, api_data)
+                print("RAG Response:", rag_response)
+            else:
+                print(f"No data found for {api_name}")
+        else:
+            print(f"No config found for {api_name}")
+    else:
+        print("No relevant API found. Falling back to chatbot mode...")
+        fallback_response = fallback_chatbot(user_input, Config.HUGGINGFACE_API_KEY2)
+        print("Chatbot Response:", fallback_response)
 
-    # Fetch data from the selected API
-    api_data = api_service.fetch_data(api_name, endpoint)
-    if not api_data:
-        print(f"Error fetching data from {api_name}, falling back to chatbot mode...")
-        chatbot_response = fallback_chatbot(user_input, fallback_api_key)
-        print("Chatbot Response:", chatbot_response)
-        return
-
-    # Process the data with agents
-    response = agent_manager.process_request(user_input)
-    print("Response from Agents:", response)
-
-    # Process with RAG
-    rag_response = rag_service.process(user_input, api_data)
-    print("RAG Response:", rag_response)
 
 def get_api_name_from_query(query: str) -> str:
-    """
-    Dynamically determines the correct API to call based on the query.
-    """
-    api_keywords = {
+    keywords = {
         'news': 'news_api',
         'weather': 'weather_api',
         'crypto': 'crypto_api',
@@ -74,24 +92,21 @@ def get_api_name_from_query(query: str) -> str:
         'trends': 'trends_api',
         'transport': 'transport_api',
     }
-
-    query_lower = query.lower()
-
-    # Check which API the query relates to based on keywords
-    for keyword, api_name in api_keywords.items():
-        if keyword in query_lower:
+    for keyword, api_name in keywords.items():
+        if keyword in query.lower():
             return api_name
+    return None
 
-    return None  # Return None if no relevant API found
 
 def fallback_chatbot(query: str, api_key: str) -> str:
-    """
-    A simple fallback to a conversational chatbot if no API data is available.
-    Uses Hugging Face's FLAN T5 Large model for generating conversational responses.
-    """
-    chatbot = pipeline("text2text-generation", model="google/flan-t5-large", tokenizer="google/flan-t5-large", use_auth_token=api_key)
-    response = chatbot(query, max_length=50, num_return_sequences=1)
-    return response[0]['generated_text'].strip()
+    try:
+        chatbot = pipeline("text2text-generation", model="google/flan-t5-large", use_auth_token=api_key)
+        response = chatbot(query, max_length=50, num_return_sequences=1)
+        return response[0]['generated_text'].strip()
+    except Exception as e:
+        print(f"Chatbot error: {e}")
+        return "Error in chatbot processing."
+
 
 if __name__ == "__main__":
     main()
