@@ -124,21 +124,21 @@ class Config:
         },
         # Models Configuration
         "summarizer_api_key": {
-            "base_url": "https://api-inference.huggingface.co/models/facebook/bart-large-cnn",  # Summarizer Model
+            "base_url": "https://api-inference.huggingface.co/models/mistralai/Mistral-7B-Instruct-v0.3",  # Summarizer Model
             "headers": {
                 "Authorization": f"Bearer {os.getenv('HUGGINGFACE_API_KEY')}"  # For Summarizer
             },
             "params": {}
         },
         "reasoning_api_key": {
-            "base_url": "https://api-inference.huggingface.co/models/google/flan-t5-large",  # Reasoning Model
+            "base_url": "https://api-inference.huggingface.co/models/mistralai/Mistral-7B-Instruct-v0.3",  # Reasoning Model
             "headers": {
                 "Authorization": f"Bearer {os.getenv('HUGGINGFACE_API_KEY1')}"  # For Reasoning
             },
             "params": {}
         },
         "fallback_api_key": {
-            "base_url": "https://api-inference.huggingface.co/models/google/flan-t5-large",  # Fallback Model
+            "base_url": "https://api-inference.huggingface.co/models/mistralai/Mistral-7B-Instruct-v0.3",  # Fallback Model
             "headers": {
                 "Authorization": f"Bearer {os.getenv('HUGGINGFACE_API_KEY2')}"  # For Fallback
             },
