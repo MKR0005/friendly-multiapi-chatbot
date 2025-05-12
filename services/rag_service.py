@@ -1,6 +1,8 @@
 from typing import List, Dict
 from agents.summarizer import Summarizer
 from agents.reasoning import Reasoning
+# from utils.logger import Logger  # Uncomment if you want to log
+# logger = Logger()
 
 class RAGService:
     def __init__(self, api_key: str):
@@ -9,35 +11,36 @@ class RAGService:
 
     def retrieve(self, query: str, api_responses: List[Dict]) -> List[Dict]:
         """
-        Simulates retrieval process by filtering API responses based on query.
+        Filters API responses based on query relevance.
         """
         relevant_responses = []
         for response in api_responses:
-            if query.lower() in response.get("data", "").lower():
+            data = response.get("data", "")
+            if isinstance(data, str) and query.lower() in data.lower():
                 relevant_responses.append(response)
         return relevant_responses
 
     def aggregate(self, relevant_responses: List[Dict]) -> str:
         """
-        Aggregates the relevant responses into a single response string.
+        Joins all relevant data fields into a single string.
         """
-        aggregated_response = "\n".join([resp.get("data", "") for resp in relevant_responses])
-        return aggregated_response
+        return "\n".join([resp.get("data", "") for resp in relevant_responses if isinstance(resp.get("data", ""), str)])
 
     def process(self, query: str, api_responses: List[Dict]) -> str:
         """
-        Full RAG processing pipeline: retrieve, aggregate, summarize, and reason.
+        Full RAG pipeline: retrieve → aggregate → summarize → reason.
         """
-        # Step 1: Retrieve relevant responses
         relevant_responses = self.retrieve(query, api_responses)
+        
+        if not relevant_responses:
+            return "No relevant information found to answer your query."
 
-        # Step 2: Aggregate responses
         aggregated_response = self.aggregate(relevant_responses)
 
-        # Step 3: Summarize the aggregated content
-        summarized_content = self.summarizer.summarize(aggregated_response)
+        if not aggregated_response.strip():
+            return "Relevant information was empty or could not be aggregated."
 
-        # Step 4: Apply reasoning
+        summarized_content = self.summarizer.summarize(aggregated_response)
         final_response = self.reasoning.reason(summarized_content)
 
         return final_response
