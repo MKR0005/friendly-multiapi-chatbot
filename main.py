@@ -2,7 +2,7 @@ from services.api_service import APIService
 from agents.agent_manager import AgentManager
 from services.rag_service import RAGService
 from transformers import pipeline
-from config import Config  # Assuming the Config class is in the config module
+from config import Config  # Import Config class from config module
 
 def main():
     # Initialize with Hugging Face API Keys for different models
@@ -92,5 +92,6 @@ def fallback_chatbot(query: str, api_key: str) -> str:
     chatbot = pipeline("text2text-generation", model="google/flan-t5-large", tokenizer="google/flan-t5-large", use_auth_token=api_key)
     response = chatbot(query, max_length=50, num_return_sequences=1)
     return response[0]['generated_text'].strip()
+
 if __name__ == "__main__":
     main()
