@@ -1,8 +1,10 @@
 import os
 from dotenv import load_dotenv
 
+# Load environment variables from .env file
 load_dotenv()
 
+# API configuration dictionary
 API_CONFIG = {
     "news_api": {
         "base_url": "https://example.com/news/",
@@ -118,6 +120,8 @@ API_CONFIG = {
         "params": {
             "apikey": os.getenv("API_KEY_TRANSPORT")
         }
+    },
+    # Models Configuration
     "summarizer_model": {
         "base_url": "https://api-inference.huggingface.co/models/facebook/bart-large-cnn",  # Summarizer Model
         "headers": {
