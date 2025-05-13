@@ -16,27 +16,6 @@ class Config:
     HUGGINGFACE_API_KEY1 = os.getenv("HUGGINGFACE_API_KEY1")
     HUGGINGFACE_API_KEY2 = os.getenv("HUGGINGFACE_API_KEY2")
 
-    # Define API configurations
-    API_CONFIG = {
-        'news_api': {'base_url': 'https://api.news.com/v1', 'headers': {}},
-        'weather_api': {'base_url': 'https://api.weather.com/v1', 'headers': {}},
-        'crypto_api': {'base_url': 'https://api.crypto.com/v1', 'headers': {}},
-        'sports_api': {'base_url': 'https://api.sports.com/v1', 'headers': {}},
-        'stocks_api': {'base_url': 'https://api.stocks.com/v1', 'headers': {}},
-        'finance_api': {'base_url': 'https://api.finance.com/v1', 'headers': {}},
-        'health_api': {'base_url': 'https://api.health.com/v1', 'headers': {}},
-        'education_api': {'base_url': 'https://api.education.com/v1', 'headers': {}},
-        'travel_api': {'base_url': 'https://api.travel.com/v1', 'headers': {}},
-        'books_api': {'base_url': 'https://api.books.com/v1', 'headers': {}},
-        'music_api': {'base_url': 'https://api.music.com/v1', 'headers': {}},
-        'traffic_api': {'base_url': 'https://api.traffic.com/v1', 'headers': {}},
-        'shopping_api': {'base_url': 'https://api.shopping.com/v1', 'headers': {}},
-        'jobs_api': {'base_url': 'https://api.jobs.com/v1', 'headers': {}},
-        'events_api': {'base_url': 'https://api.events.com/v1', 'headers': {}},
-        'trends_api': {'base_url': 'https://api.trends.com/v1', 'headers': {}},
-        'transport_api': {'base_url': 'https://api.transport.com/v1', 'headers': {}},
-    }
-
 def main():
     # Initialize services with API keys
     api_service = APIService()
