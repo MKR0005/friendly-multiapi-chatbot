@@ -6,8 +6,8 @@ from services.rag_service import RAGService
 from transformers import pipeline
 from config import Config  # Import Config class from config module
 from dotenv import load_dotenv
-from summarizer import Summarizer  # Import the Summarizer class
-from reasoning import Reasoning  # Import the Reasoning class
+from modules.summarizer import Summarizer  # Import the Summarizer class
+from modules.reasoning import Reasoning  # Import the Reasoning class
 
 # Load environment variables
 load_dotenv()
