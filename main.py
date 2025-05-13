@@ -110,7 +110,7 @@ def fallback_chatbot(query: str) -> str:
                     token=key,  # Use token parameter instead
                     device="cuda" if torch.cuda.is_available() else "cpu"
                 )
-                    def fallback_chatbot(query: str) -> str:
+
                     # ... existing code ...
                  response = chatbot(
                         query,
