@@ -96,10 +96,9 @@ def get_api_name_from_query(query: str) -> str:
         if keyword in query.lower():
             return api_name
     return None
-
 def fallback_chatbot(query: str) -> str:
     api_keys = [Config.HUGGINGFACE_API_KEY, Config.HUGGINGFACE_API_KEY1, Config.HUGGINGFACE_API_KEY2]
-    
+
     for key in api_keys:
         if key:
             try:
@@ -111,21 +110,22 @@ def fallback_chatbot(query: str) -> str:
                     device="cuda" if torch.cuda.is_available() else "cpu"
                 )
 
-                 response = chatbot(
-                        query,
-                        max_length=100,
-                        temperature=0.7,  # Controls randomness (0.0-1.0)
-                        repetition_penalty=1.2,  # Prevent repetitive responses
-                        num_beams=4  # Better quality through beam search
-                 )
-    # Add post-processing
-    clean_response = response[0]['generated_text'].strip()
-    return clean_response.replace("  ", " ")  # Fix double spaces
-                return response[0]['generated_text'].strip()
+                response = chatbot(
+                    query,
+                    max_length=100,
+                    temperature=0.7,  # Controls randomness (0.0-1.0)
+                    repetition_penalty=1.2,  # Prevent repetitive responses
+                    num_beams=4  # Better quality through beam search
+                )
+
+                # Add post-processing
+                clean_response = response[0]['generated_text'].strip()
+                return clean_response.replace("  ", " ")  # Fix double spaces
+
             except Exception as e:
                 print(f"Chatbot error with API key: {str(e)}")
                 continue
-    
+
     return "I'm unable to process your request at the moment. Please try again later."
 
 
