@@ -111,14 +111,13 @@ def fallback_chatbot(query: str) -> str:
                     device="cuda" if torch.cuda.is_available() else "cpu"
                 )
 
-                    # ... existing code ...
                  response = chatbot(
                         query,
                         max_length=100,
                         temperature=0.7,  # Controls randomness (0.0-1.0)
                         repetition_penalty=1.2,  # Prevent repetitive responses
                         num_beams=4  # Better quality through beam search
-                )
+                 )
     # Add post-processing
     clean_response = response[0]['generated_text'].strip()
     return clean_response.replace("  ", " ")  # Fix double spaces
