@@ -1,20 +1,16 @@
-import torch
 import os
+import torch
 from services.api_service import APIService
 from agents.agent_manager import AgentManager
 from services.rag_service import RAGService
 from transformers import pipeline
 from config import Config  # Import Config class from config module
 from dotenv import load_dotenv
+from summarizer import Summarizer  # Import the Summarizer class
+from reasoning import Reasoning  # Import the Reasoning class
 
 # Load environment variables
 load_dotenv()
-
-class Config:
-    # Load API keys from environment variables
-    HUGGINGFACE_API_KEY = os.getenv("HUGGINGFACE_API_KEY")
-    HUGGINGFACE_API_KEY1 = os.getenv("HUGGINGFACE_API_KEY1")
-    HUGGINGFACE_API_KEY2 = os.getenv("HUGGINGFACE_API_KEY2")
 
 def main():
     # Initialize services with API keys
@@ -25,56 +21,31 @@ def main():
     # Example user query
     user_input = input("Enter your query: ").strip()
 
-    # Determine API based on query
-    api_name = get_api_name_from_query(user_input)
+    # Initialize Summarizer and Reasoning agents
+    summarizer = Summarizer(api_key=Config.HUGGINGFACE_API_KEY1)  # Use HUGGINGFACE_API_KEY1 for summarization
+    reasoning = Reasoning(api_key=Config.HUGGINGFACE_API_KEY)  # Use HUGGINGFACE_API_KEY for reasoning
 
-    if api_name:
-        api_info = Config.API_CONFIG.get(api_name)
-        if api_info:
-            endpoint = api_info.get('base_url')
-            api_data = api_service.fetch_data(api_name, endpoint)
-            if api_data:
-                # Process with agents
-                response = agent_manager.process_request(user_input)
-                print("Agent Response:", response)
-
-                # Process with RAG
-                rag_response = rag_service.process(user_input, api_data)
-                print("RAG Response:", rag_response)
-            else:
-                print(f"No data found for {api_name}")
-        else:
-            print(f"No config found for {api_name}")
+    # First, try to summarize or reason based on the query before falling back to chatbot
+    summary_response = summarize_and_reason(user_input, summarizer, reasoning)
+    if summary_response:
+        print("Summarize and Reason Response:", summary_response)
     else:
         print("No relevant API found. Falling back to chatbot mode...")
         fallback_response = fallback_chatbot(user_input)
         print("Chatbot Response:", fallback_response)
 
 
-def get_api_name_from_query(query: str) -> str:
-    keywords = {
-        'news': 'news_api',
-        'weather': 'weather_api',
-        'crypto': 'crypto_api',
-        'sports': 'sports_api',
-        'stocks': 'stocks_api',
-        'finance': 'finance_api',
-        'health': 'health_api',
-        'education': 'education_api',
-        'travel': 'travel_api',
-        'books': 'books_api',
-        'music': 'music_api',
-        'traffic': 'traffic_api',
-        'shopping': 'shopping_api',
-        'jobs': 'jobs_api',
-        'events': 'events_api',
-        'trends': 'trends_api',
-        'transport': 'transport_api',
-    }
-    for keyword, api_name in keywords.items():
-        if keyword in query.lower():
-            return api_name
-    return None
+def summarize_and_reason(query: str, summarizer: Summarizer, reasoning: Reasoning) -> str:
+    # Check if the query requires summarization or reasoning
+    if 'summarize' in query.lower():
+        return summarizer.summarize(query)
+    elif 'reason' in query.lower():
+        # Assuming the context is provided for reasoning, pass it here
+        context = "Sample context for reasoning"  # Example context
+        return reasoning.reason(query, context)
+    return None  # No action taken if not a summarization or reasoning query
+
+
 def fallback_chatbot(query: str) -> str:
     api_keys = [Config.HUGGINGFACE_API_KEY, Config.HUGGINGFACE_API_KEY1, Config.HUGGINGFACE_API_KEY2]
 
@@ -110,4 +81,4 @@ def fallback_chatbot(query: str) -> str:
 
 
 if __name__ == "__main__":
-    main() 
+    main()
