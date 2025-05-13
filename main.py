@@ -113,7 +113,8 @@ def fallback_chatbot(query: str) -> str:
                 response = chatbot(
                     query,
                     max_length=100,
-                    temperature=0.7,  # Controls randomness (0.0-1.0)
+                    do_sample=True,  # Enable sampling for varied responses
+                    temperature=0.7,  # Controls randomness
                     repetition_penalty=1.2,  # Prevent repetitive responses
                     num_beams=4  # Better quality through beam search
                 )
