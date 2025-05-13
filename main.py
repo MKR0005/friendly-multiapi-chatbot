@@ -22,8 +22,10 @@ def main():
     user_input = input("Enter your query: ").strip()
 
     # Initialize Summarizer and Reasoning agents
-    summarizer = Summarizer(api_key=Config.HUGGINGFACE_API_KEY1)  # Use HUGGINGFACE_API_KEY1 for summarization
-    reasoning = Reasoning(api_key=Config.HUGGINGFACE_API_KEY)  # Use HUGGINGFACE_API_KEY for reasoning
+    summarizer = Summarizer(api_key=Config.API_CONFIG["summarizer_api_key"]["headers"]["Authorization"])
+  # Use HUGGINGFACE_API_KEY1 for summarization
+    reasoning_api_key = Config.API_CONFIG["reasoning_api_key"]["headers"]["Authorization"]
+  # Use HUGGINGFACE_API_KEY for reasoning
 
     # First, try to summarize or reason based on the query before falling back to chatbot
     summary_response = summarize_and_reason(user_input, summarizer, reasoning)
