@@ -122,7 +122,7 @@ class Config:
                 "apikey": os.getenv("API_KEY_TRANSPORT")
             }
         },
-        # Models Configuration
+    # Models Configuration
         "summarizer_api_key": {
             "base_url": "https://api-inference.huggingface.co/models/mistralai/Mistral-7B-Instruct-v0.3",  # Summarizer Model
             "headers": {
@@ -142,6 +142,9 @@ class Config:
             "headers": {
                 "Authorization": f"Bearer {os.getenv('HUGGINGFACE_API_KEY2')}"  # For Fallback
             },
+            "params": {}
+        }
+    }
             "params": {}
         }
     }
