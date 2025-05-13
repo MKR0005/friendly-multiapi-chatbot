@@ -1,3 +1,4 @@
+import torch
 import os
 from services.api_service import APIService
 from agents.agent_manager import AgentManager
@@ -96,20 +97,26 @@ def get_api_name_from_query(query: str) -> str:
             return api_name
     return None
 
-
 def fallback_chatbot(query: str) -> str:
     api_keys = [Config.HUGGINGFACE_API_KEY, Config.HUGGINGFACE_API_KEY1, Config.HUGGINGFACE_API_KEY2]
     
     for key in api_keys:
         if key:
             try:
-                chatbot = pipeline("text2text-generation", model="google/flan-t5-large", use_auth_token=key)
+                # Updated pipeline initialization without use_auth_token
+                chatbot = pipeline(
+                    "text2text-generation", 
+                    model="google/flan-t5-large",
+                    token=key,  # Use token parameter instead
+                    device="cuda" if torch.cuda.is_available() else "cpu"
+                )
                 response = chatbot(query, max_length=50, num_return_sequences=1)
                 return response[0]['generated_text'].strip()
             except Exception as e:
-                print(f"Chatbot error with API key {key}: {e}")
+                print(f"Chatbot error with API key: {str(e)}")
+                continue
     
-    return "Error in chatbot processing. All API keys failed."
+    return "I'm unable to process your request at the moment. Please try again later."
 
 
 if __name__ == "__main__":
