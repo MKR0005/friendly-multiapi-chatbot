@@ -1,10 +1,13 @@
 import os
 import torch
 from services.api_service import APIService
+from agents.agent_manager import AgentManager
 from services.rag_service import RAGService
 from transformers import pipeline
 from config import Config  # Import Config class from config module
 from dotenv import load_dotenv
+from summarizer import Summarizer  # Import the Summarizer class
+from reasoning import Reasoning  # Import the Reasoning class
 
 # Load environment variables
 load_dotenv()
@@ -12,15 +15,13 @@ load_dotenv()
 def main():
     # Initialize services with API keys
     api_service = APIService()
+    agent_manager = AgentManager()
     rag_service = RAGService()
 
     # Example user query
     user_input = input("Enter your query: ").strip()
 
     # Initialize Summarizer and Reasoning agents
-    from modules.summarizer import Summarizer  # Lazy import
-    from modules.reasoning import Reasoning  # Lazy import
-
     summarizer = Summarizer(api_key=Config.HUGGINGFACE_API_KEY1)  # Use HUGGINGFACE_API_KEY1 for summarization
     reasoning = Reasoning(api_key=Config.HUGGINGFACE_API_KEY)  # Use HUGGINGFACE_API_KEY for reasoning
 
